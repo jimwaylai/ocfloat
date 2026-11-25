@@ -1,0 +1,18 @@
+.DS_Store
+build/
+DerivedData/
+*.xcodeproj/
+xcuserdata/
+*.xcuserstate
+docs/
+
+# Signing secrets: keep them out of the repo.
+sparkle-private-key*
+*.jks
+*.keystore
+*.p12
+*.p8
+*.cer
+*.mobileprovision
+scripts/
+packaging/

@@ -1,0 +1,93 @@
+name: FloatingChat
+options:
+  bundleIdPrefix: tw.com.shitu
+  deploymentTarget:
+    macOS: "15.0"
+  developmentLanguage: en
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    DEAD_CODE_STRIPPING: YES
+    LOCALIZATION_PREFERS_STRING_CATALOGS: YES
+    SWIFT_EMIT_LOC_STRINGS: YES
+    STRING_CATALOG_GENERATE_SYMBOLS: NO
+    # Where releases, the Sparkle appcast and the Homebrew cask point.
+    OCF_GITHUB_REPO: jimwaylai/ocfloat
+    # Sparkle EdDSA public key; the private key stays in the login keychain.
+    OCF_SPARKLE_PUBLIC_KEY: "vAl3FE/1gJ9lxRmgwVEIlbkAT1oRe3jNQuNCSSb3BB0="
+packages:
+  Textual:
+    url: https://github.com/gonzalezreal/textual
+    from: 0.5.0
+  Sparkle:
+    url: https://github.com/sparkle-project/Sparkle
+    from: 2.7.0
+targets:
+  FloatingChat:
+    type: application
+    platform: macOS
+    sources:
+      - path: FloatingChat
+    dependencies:
+      - package: Textual
+      - package: Sparkle
+    info:
+      path: FloatingChat/Info.plist
+      properties:
+        CFBundleDisplayName: ocfloat
+        CFBundleName: ocfloat
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        CFBundleDevelopmentRegion: en
+        CFBundleLocalizations: [en, zh-Hant]
+        LSApplicationCategoryType: public.app-category.productivity
+        LSMinimumSystemVersion: $(MACOSX_DEPLOYMENT_TARGET)
+        LSUIElement: true
+        NSHumanReadableCopyright: ""
+        SUFeedURL: https://github.com/$(OCF_GITHUB_REPO)/releases/latest/download/appcast.xml
+        SUPublicEDKey: $(OCF_SPARKLE_PUBLIC_KEY)
+        SUEnableAutomaticChecks: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: tw.com.shitu.ocfloat
+        PRODUCT_NAME: ocfloat
+        PRODUCT_MODULE_NAME: FloatingChat
+        ENABLE_APP_SANDBOX: NO
+        ENABLE_HARDENED_RUNTIME: YES
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        COMBINE_HIDPI_IMAGES: YES
+      configs:
+        # Local builds are signed ad hoc and need no account.
+        Debug:
+          CODE_SIGN_STYLE: Automatic
+          CODE_SIGN_IDENTITY: "-"
+        Release:
+          CODE_SIGN_STYLE: Manual
+          CODE_SIGN_IDENTITY: Developer ID Application
+          DEVELOPMENT_TEAM: WFJ9TALRV4
+          OTHER_CODE_SIGN_FLAGS: --timestamp
+  FloatingChatTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: FloatingChatTests
+    dependencies:
+      - target: FloatingChat
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: tw.com.shitu.ocfloat.tests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/ocfloat.app/Contents/MacOS/ocfloat"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+schemes:
+  FloatingChat:
+    build:
+      targets:
+        FloatingChat: all
+        FloatingChatTests: [test]
+    test:
+      targets:
+        - FloatingChatTests
