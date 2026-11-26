@@ -441,6 +441,16 @@
         }
       }
     },
+    "Close (⌘W)" : {
+      "localizations" : {
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "關閉（⌘W）"
+          }
+        }
+      }
+    },
     "New Conversation (⌘N)" : {
       "localizations" : {
         "zh-Hant" : {

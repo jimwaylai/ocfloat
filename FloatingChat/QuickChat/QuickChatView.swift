@@ -60,6 +60,10 @@ struct QuickChatView: View {
             .padding(.horizontal, 60)
             .frame(maxWidth: .infinity)
             .frame(height: QuickChatLayout.headerHeight)
+            .overlay(alignment: .leading) {
+                headerButton("xmark", help: "Close (⌘W)", action: model.close)
+                    .padding(.leading, 10)
+            }
             .overlay(alignment: .trailing) {
                 HStack(spacing: 2) {
                     headerButton("clock.arrow.circlepath", help: "Recent Conversations (⌘K)", isOn: model.recents != nil, action: model.toggleRecents)

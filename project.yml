@@ -22,6 +22,10 @@ packages:
   Textual:
     url: https://github.com/gonzalezreal/textual
     from: 0.5.0
+  # Already a Textual dependency; imported directly to detect formulas it cannot parse.
+  SwiftUIMath:
+    url: https://github.com/gonzalezreal/swiftui-math
+    from: 0.1.0
   Sparkle:
     url: https://github.com/sparkle-project/Sparkle
     from: 2.7.0
@@ -33,6 +37,7 @@ targets:
       - path: FloatingChat
     dependencies:
       - package: Textual
+      - package: SwiftUIMath
       - package: Sparkle
     info:
       path: FloatingChat/Info.plist

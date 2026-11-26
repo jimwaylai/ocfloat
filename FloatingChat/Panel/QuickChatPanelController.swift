@@ -32,6 +32,7 @@ final class QuickChatPanelController: NSObject, NSWindowDelegate {
         panel.delegate = self
         panel.onCancel = { [weak self] in self?.hide() }
         model.onChooseFiles = { [weak self] in self?.chooseFiles() }
+        model.onClose = { [weak self] in self?.hide() }
         installKeyMonitor()
         observeLayout()
     }
@@ -188,7 +189,7 @@ final class QuickChatPanelController: NSObject, NSWindowDelegate {
     private static let upKey: UInt16 = 126
 
     /// The field editor swallows Esc before it reaches `cancelOperation`, a text field
-    /// cannot tell Return from ⇧Return, and the accessory app has no main menu for ⌘N and ⌘.,
+    /// cannot tell Return from ⇧Return, and the accessory app has no main menu for ⌘N, ⌘W and ⌘.,
     /// so these are intercepted here.
     private func installKeyMonitor() {
         keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
@@ -219,6 +220,10 @@ final class QuickChatPanelController: NSObject, NSWindowDelegate {
             }
             if modifiers == .command, Self.isKey("n", keyCode: 45, event) {
                 self.model.newConversation()
+                return nil
+            }
+            if modifiers == .command, Self.isKey("w", keyCode: 13, event) {
+                self.hide()
                 return nil
             }
             // The text system would turn ⌘. into cancelOperation, which hides the panel.

@@ -340,6 +340,13 @@ final class QuickChatModel {
         onChooseFiles?()
     }
 
+    /// Hides the panel; set by the panel controller, which owns the window.
+    @ObservationIgnored var onClose: (() -> Void)?
+
+    func close() {
+        onClose?()
+    }
+
     func removeAttachment(_ id: Attachment.ID) {
         attachments.removeAll { $0.id == id }
     }

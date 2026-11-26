@@ -69,12 +69,65 @@ private struct MarkdownText: View {
     }
 
     var body: some View {
-        StructuredText(markdown: markdown)
+        StructuredText(markdown, parser: MathMarkdownParser())
             .font(.system(size: 14))
             // The innermost environment value wins, so the override must come before the preset.
             .textual.codeBlockStyle(CopyableCodeBlockStyle())
+            .textual.tableStyle(SubtleTableStyle())
+            .textual.inlineStyle(Self.inlineStyle)
             .textual.structuredTextStyle(.gitHub)
             .textual.textSelection(.enabled)
+    }
+
+    /// GitHub's inline style, but with Slack-like inline code: GitHub's near-white code
+    /// background reads as a white block on the translucent panel.
+    private static let inlineStyle = InlineStyle()
+        .code(
+            .monospaced,
+            .fontScale(0.85),
+            .backgroundColor(DynamicColor(light: .black.opacity(0.06), dark: .white.opacity(0.1))),
+            .foregroundColor(DynamicColor(
+                light: Color(red: 224 / 255, green: 30 / 255, blue: 90 / 255),
+                dark: Color(red: 232 / 255, green: 145 / 255, blue: 45 / 255)
+            ))
+        )
+        .strong(.fontWeight(.semibold))
+        .link(.foregroundColor(DynamicColor(
+            light: Color(red: 44 / 255, green: 101 / 255, blue: 207 / 255),
+            dark: Color(red: 76 / 255, green: 142 / 255, blue: 248 / 255)
+        )))
+}
+
+/// GitHub's table style, but GitHub's near-white striping reads as white rows on the
+/// translucent panel, so even rows are only a little lighter than odd ones.
+private struct SubtleTableStyle: StructuredText.TableStyle {
+    private static let borderWidth: CGFloat = 1
+    private static let stripe = DynamicColor(light: .white.opacity(0.35), dark: .white.opacity(0.05))
+    private static let border = DynamicColor(
+        light: Color(red: 228 / 255, green: 228 / 255, blue: 232 / 255),
+        dark: Color(red: 66 / 255, green: 68 / 255, blue: 78 / 255)
+    )
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .textual.tableCellSpacing(horizontal: Self.borderWidth, vertical: Self.borderWidth)
+            .textual.blockSpacing(.init(top: 0, bottom: 16))
+            .textual.tableBackground { layout in
+                Canvas { context, _ in
+                    for row in layout.rowIndices.dropFirst() where row.isMultiple(of: 2) {
+                        context.fill(Path(layout.rowBounds(row).integral), with: .style(Self.stripe))
+                    }
+                }
+            }
+            .textual.tableOverlay { layout in
+                Canvas { context, _ in
+                    for divider in layout.dividers() {
+                        context.fill(Path(divider), with: .style(Self.border))
+                    }
+                }
+            }
+            .padding(Self.borderWidth)
+            .border(Self.border, width: Self.borderWidth)
     }
 }
 
